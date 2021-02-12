@@ -7,16 +7,17 @@ with open("measures.html", "r", encoding='utf-8') as f:
 soup = BeautifulSoup(text,'html.parser')
 
 #print all Measurement Headlines
-'''
+
 pAll = soup.find_all('h3')
 print(pAll)
+
+#print content of one chapter
 '''
-#print content of id 738
 #find by id
 cid = soup.find(id="topic_738")
-#print only text fro chapter
+#print only text from chapter
 print(cid.get_text())
-
+'''
 
 
 
