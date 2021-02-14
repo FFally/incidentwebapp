@@ -2,22 +2,24 @@ import urllib.request
 from bs4 import BeautifulSoup
 
 # HTML File-Reader Approach
-with open("measures.html", "r", encoding='utf-8') as f:
+with open("resources\measures.html", "r", encoding='utf-8') as f:
     text= f.read()
 soup = BeautifulSoup(text,'html.parser')
 
 #print all Measurement Headlines
-
+'''
 pAll = soup.find_all('h3')
 print(pAll)
-
+'''
 #print content of one chapter
-'''
+
 #find by id
-cid = soup.find(id="topic_738")
-#print only text from chapter
-print(cid.get_text())
-'''
+def find_byid():
+    cid = soup.find(id="topic_738")
+    cid_text = cid.get_text() 
+    return cid_text
+
+
 
 
 
