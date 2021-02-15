@@ -1,5 +1,5 @@
 from flask import render_template
-from app import app, measures_api
+from app import app, measures_api,mitre_api
 
 
 @app.route('/')
@@ -18,7 +18,13 @@ def index():
     ]
     return render_template('index.html', title='Home', user=user, posts=posts)
 
+@app.route('/taskzero')
+def taskzeroget():
+    technique = mitre_api.get_technique()
+    return render_template('taskzero.html', title='Taskzero', technique = technique)
+
+
 @app.route('/taskone')
 def taskonget():
     measureone = measures_api.find_byid()
-    return render_template('taskone.html', title='Taskone',measureone = measureone)
+    return render_template('taskone.html', title='Taskone', measureone = measureone)

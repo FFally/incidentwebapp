@@ -1,5 +1,6 @@
 import urllib.request
 from bs4 import BeautifulSoup
+import requests
 
 # HTML File-Reader Approach
 with open("resources\measures.html", "r", encoding='utf-8') as f:
@@ -11,29 +12,24 @@ soup = BeautifulSoup(text,'html.parser')
 pAll = soup.find_all('h3')
 print(pAll)
 '''
-#print content of one chapter
 
-#find by id
+# put measure into python dictionary
 def find_byid():
-    cid = soup.find(id="topic_738")
-    cid_text = cid.get_text() 
-    return cid_text
-
-
-
+    cid = soup.find(id="topic_733")
+    result = {}
+    res_title = cid.find('h3')
+    res_desc = cid.get_text()
+    result["title"] = res_title.get_text() 
+    result["description"] = res_desc
+    return result 
 
 
 
 # URL Request Approach
 '''
-content = urllib.request.urlopen('https://www.sicherheitshandbuch.gv.at/#738')
+content = urllib.request.urlopen('https://www.sicherheitshandbuch.gv.at/')
 read_content = content.read()
 soup = BeautifulSoup(read_content,'html.parser')
-
-# print all Tags
-for tag in soup.find_all(True):
-    print(tag.name)
-
 '''
 
 
