@@ -28,3 +28,14 @@ def taskzeroget():
 def taskonget():
     measureone = measures_api.find_byid()
     return render_template('taskone.html', title='Taskone', measureone = measureone)
+
+@app.route('/tasktry')
+def taskgetall():
+    measurelist = measures_api.getall_topics()
+    return render_template('tasktry.html', title='Tasktry', measurelist = measurelist )
+
+@app.route('/policyresult', methods=['GET', 'POST'])
+def showresultone():
+    result = request.form['applied']
+    print(result)
+    return result

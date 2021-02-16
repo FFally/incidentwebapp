@@ -20,9 +20,10 @@ collection = Collection(f"https://cti-taxii.mitre.org/stix/collections/{collecti
 src = TAXIICollectionSource(collection)
 phish = src.query([ Filter("external_references.external_id", "=", "T1566") ])[0]
 
+'''
 print(phish['name']) #print name of technique phishing
 print(phish['description']) #print description of technique phishing 
-
+'''
 
 def get_technique():
     tec = src.query([ Filter("external_references.external_id", "=", "T1566") ])[0]
