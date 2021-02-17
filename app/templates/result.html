@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% for policy in policylist %}
-    <div><p>{{ policy.topic }}: <b>{{ policy.applied }}</b></p></div>
-    {% endfor %}
+<h2>Coverage by Policy</h2>
 {% endblock %}
+<a href="/analyze">Analyse Evidence</a>

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Lack of coverage by policy:</h2>
+{% for policy in policylist %}
+<div>
+    {% if policy.applied == "FALSE" %}
+    <p><b>{{ policy.title }}:</b> <br> {{ policy.description }}</p>
+    {% endif %}
+</div>
+{% endfor %}
+{% if addmeas != "Please enter here." %}
+<p><b>Your additional applied measures:</b></p>
+<p>{{addmeas}}</p>
+{% endif %}
+{% endblock %}

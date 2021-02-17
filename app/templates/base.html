@@ -1,14 +1,17 @@
 <html>
-    <head>
-      {% if title %}
-      <title>{{ title }} - IncidentResponseApp</title>
-      {% else %}
-      <title>Welcome to IncidentResponseApp</title>
-      {% endif %}
-    </head>
-    <body>
-        <div>IncidentResponseApp: <a href="/technique">Choose Technique</a> <a href="/reviewmeas">Review Measures</a> </div>
-        <hr>
-        {% block content %}{% endblock %}
-    </body>
+
+<head>
+  {% if title %}
+  <title>{{ title }} - IncidentResponseApp</title>
+  {% else %}
+  <title>Welcome to IncidentResponseApp</title>
+  {% endif %}
+</head>
+
+<body>
+  <div>IncidentResponseApp: <a href="/technique">Choose Technique</a> <a href="/reviewmeas">Review Measures</a> </div>
+  <hr>
+  {% block content %}{% endblock %}
+</body>
+
 </html>

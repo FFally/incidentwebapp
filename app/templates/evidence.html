@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Analyze Evidence</h1>
+{% for evidence in evidencelist %}
+<div>
+    <h2>{{ evidence.question }}:</h2>
+</div>
+<div class="form">
+    <form method="POST" action="/analyze">
+        <label class="container"><b>Has there been a violation?</b>
+            <input type="radio" name="{{evidence.id}}" value="TRUE"> Yes
+            <input type="radio" name="{{evidence.id}}" value="FALSE" checked> No
+        </label>
+        <br><br>
+        {% endfor %}
+        <p><b>Have there been any additional Analyzations?</b></p>
+        <textarea id="ownanalyzation" name="addanalyzation" rows="4" cols="50">Please enter here.</textarea>
+        <br><br>
+        <button type="submit" class="btn btn-success">Show Result</button>
+    </form>
+</div>
+<br>
+
+{% endblock %}
