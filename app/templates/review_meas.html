@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Review Controlvariables</h1>
+    {% for measure in measurelist %}
+    <div><p><b>{{ measure.title }}:</b> <br> {{ measure.description }}</p></div>
+    <div class="form">
+        <form method="POST" action="/reviewmeas">
+            <label class="container"><b>Has this measure been applied?</b>
+                <input type="radio" name="{{measure.topic}}" value="TRUE" checked> Yes
+                <input type="radio" name="{{measure.topic}}" value="FALSE"> No
+            </label> 
+            <br><br>  
+    {% endfor %}
+    <br><br>
+    <button type="submit" class="btn btn-success">Show Result</button>
+</form>
+
+</div>
+    <br>
+
+{% endblock %}

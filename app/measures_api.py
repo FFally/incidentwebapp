@@ -26,6 +26,7 @@ def find_byid(topic):
         res_desc += part 
     result["title"] = res_title
     result["description"] = res_desc
+    result["topic"] = topic
     return result 
 
 # return measures in list of dictionaries
@@ -36,10 +37,6 @@ def getall_topics():
     return resultlist
 
 
-#print(getall_topics())
-
-#print(soup.find(id="topic_747"))
-#print(soup.find(id="topic_733"))
 
 
 

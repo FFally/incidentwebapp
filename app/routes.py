@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, request
 from app import app, measures_api,mitre_api
 
 
@@ -18,24 +18,27 @@ def index():
     ]
     return render_template('index.html', title='Home', user=user, posts=posts)
 
-@app.route('/taskzero')
+@app.route('/technique')
 def taskzeroget():
     technique = mitre_api.get_technique()
-    return render_template('taskzero.html', title='Taskzero', technique = technique)
+    return render_template('technique.html', title='Choose Technique', technique = technique)
 
 
-@app.route('/taskone')
-def taskonget():
-    measureone = measures_api.find_byid()
-    return render_template('taskone.html', title='Taskone', measureone = measureone)
-
-@app.route('/tasktry')
+@app.route('/reviewmeas')
 def taskgetall():
+    global measurelist
     measurelist = measures_api.getall_topics()
-    return render_template('tasktry.html', title='Tasktry', measurelist = measurelist )
+    return render_template('review_meas.html', title='Review Measures', measurelist = measurelist )
 
-@app.route('/policyresult', methods=['GET', 'POST'])
-def showresultone():
-    result = request.form['applied']
-    print(result)
-    return result
+@app.route('/reviewmeas', methods=['POST'])
+def get_userinput():
+
+    policylist = []
+    for i in range(len(measurelist)):
+        answer = {}
+        check = measurelist[i]["topic"]
+        answer["topic"] = measurelist[i]["topic"]
+        answer["applied"] = request.form[check]
+        policylist.append(answer)
+
+    return render_template('result.html', title='result', policylist = policylist)
