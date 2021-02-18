@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Incident in spite of policy being applied</h2>
+{% endblock %}
+{% if ownanalysis.ownquestion != "Please enter here." %}
+<p><b>Your additional analysis:</b></p>
+<p>{{ownanalysis.ownquestion}}</p>
+{% endif %}

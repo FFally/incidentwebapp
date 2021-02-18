@@ -6,17 +6,7 @@ from app import app, measures_api, mitre_api, evidence_api
 @app.route('/index')
 def index():
     user = {'username': 'Felix'}
-    posts = [
-        {
-            'author': {'username': 'Q1'},
-            'body': 'Has measurement A been applied?'
-        },
-        {
-            'author': {'username': 'Q2'},
-            'body': 'Has measurement B been applied?'
-        }
-    ]
-    return render_template('index.html', title='Home', user=user, posts=posts)
+    return render_template('index.html', title='Home', user=user)
 
 @app.route('/technique')
 def taskzeroget():
@@ -44,40 +34,44 @@ def get_userinput():
         policylist.append(answer)
      
     addmeas = request.form["addmeas"] 
-    #Results:
+    #Results Measures Analysis
     for pol in policylist: 
         if pol["applied"] == "FALSE":
             return render_template('policylack.html', title='Policy Lack', policylist = policylist, addmeas = addmeas)
         else:
-            return render_template('result.html', title='result', policylist = policylist, addmeas = addmeas)
+            return render_template('policycoverage.html', title='Policy Coverage', policylist = policylist, addmeas = addmeas)
 
   
-@app.route('/analyze')
+@app.route('/analysis')
 def get_evidence():
     global evidencelist
     evidencelist = evidence_api.getall_evidences()
-    return render_template('evidence.html', title='Analyze Evidence', evidencelist = evidencelist)
+    return render_template('analysis.html', title='Analyse Evidence', evidencelist = evidencelist)
     
 
-@app.route('/analyze', methods=['POST'])
+@app.route('/analysis', methods=['POST'])
 def get_evidenceinput():
     answerlist = []
     for i in range(len(evidencelist)):
         answer = {}
         answer["id"] = evidencelist[i]["id"]
         answer["question"] = evidencelist[i]["question"]
-        answer["applied"] = request.form[evidencelist[i]["id"]]
+        answer["violation"] = request.form[evidencelist[i]["id"]]
         answerlist.append(answer)
 
-    ownmeas = request.form["addanalyzation"]
-
-    #Results
+    ownanalysis = {}
+    ownanalysis["ownquestion"] = request.form["addanalysis"]
+    ownanalysis["violation"] = request.form["own_violation"]
+    #Results Evidence Analysis
+    one_violated = "FALSE"
     for ans in answerlist:
-        if ans["applied"] == "FALSE":
-            return render_template('positive.html', title='Policy applied', answerlist = answerlist, ownmeas = ownmeas)
-        else:
-            return render_template('negative.html', title='Policy Violation', answerlist = answerlist, ownmeas = ownmeas)
-        
+        if ans["violation"] == "TRUE":
+            one_violated = "TRUE"
+
+    if one_violated == "TRUE" or ownanalysis["violation"] == "TRUE":
+        return render_template('pol_violated.html', title='Policy Violation', answerlist = answerlist, ownanalysis = ownanalysis)
+    else:
+        return render_template('pol_applied.html', title='Policy applied', answerlist = answerlist, ownanalysis = ownanalysis)
 
 
    

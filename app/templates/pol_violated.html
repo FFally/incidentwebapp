@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Incident caused by policy violation:</h2>
+{% for answer in answerlist %}
+<div>
+    {% if answer.violation == "TRUE" %}
+    <p><b>{{ answer.question }}:</b> Policy Violated</p>
+    {% endif %}
+</div>
+{% endfor %}
+{% if ownanalysis.ownquestion != "Please enter here." and ownanalysis.violation == "TRUE" %}
+<h3>Own Analysis:</h3>
+<p><b>{{ ownanalysis.ownquestion }}:</b> Policy Violated </p>
+{% endif %}
+{% endblock %}
