@@ -1,7 +1,4 @@
 
-
-
-
 # relevant evidence question
 evidencelist = ["Violation from analysis of Interviews with Involved Individuals", "Violation from analysis of relevant collected system data","Violation from Analysis of Incident Reports"]
 
@@ -20,5 +17,5 @@ def getall_evidences():
     return resultlist
 
 
-# test
+# Only For Testing
 #print (getall_evidences()) 

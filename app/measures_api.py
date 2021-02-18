@@ -7,12 +7,7 @@ with open("resources\measures.html", "r", encoding='utf-8') as f:
     text= f.read()
 soup = BeautifulSoup(text,'html.parser')
 
-#print all Measures Headlines
-'''
-pAll = soup.find_all('h3')
-print(pAll)
-'''
-# relevant measures 
+# relevant measures for Phishing -> can be updated by Inspecting "https://www.sicherheitshandbuch.gv.at/"
 meas_list = ["topic_733","topic_747","topic_738"]
 
 # put measure into python dictionary
@@ -35,9 +30,6 @@ def getall_topics():
     for x in meas_list: 
         resultlist.append(find_byid(x))
     return resultlist
-
-
-
 
 
 # URL Request Approach
