@@ -22,10 +22,10 @@ def get_technique():
     phishing_id = "T1566"
     technique = mitre_api.get_technique(id)
     '''
-    # Get Technique from Database 
-    technique = db.techniques.find_one({"name":"Phishing"})
+    # Get all available Techniques from Database
+    techniques = list(db.techniques.find({}))
 
-    return render_template('technique.html', title='Choose Technique', technique = technique)
+    return render_template('technique.html', title='Choose Technique', techniques = techniques)
 
 @app.route('/update')
 def update_elements():
@@ -53,11 +53,14 @@ def get_userinput():
      
     addmeas = request.form["addmeas"] 
     #Results Measures Analysis
+    one_applied = "TRUE"
     for pol in policylist: 
         if pol["applied"] == "FALSE":
-            return render_template('policylack.html', title='Policy Lack', policylist = policylist, addmeas = addmeas)
-        else:
-            return render_template('policycoverage.html', title='Policy Coverage', policylist = policylist, addmeas = addmeas)
+            one_applied = "FALSE"
+    if one_applied == "FALSE":
+        return render_template('policylack.html', title='Policy Lack', policylist = policylist, addmeas = addmeas)
+    else:
+        return render_template('policycoverage.html', title='Policy Coverage', policylist = policylist, addmeas = addmeas)
 
   
 @app.route('/analysis')

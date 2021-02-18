@@ -1,6 +1,12 @@
-import urllib.request
+#import urllib
 from bs4 import BeautifulSoup
-import requests
+#import requests
+#import urllib.request
+#from pywebcopy import WebPage, config, save_website
+import pywebcopy
+
+
+#> a .html file would be saved at
 
 # HTML File-Reader Approach
 with open("resources\measures.html", "r", encoding='utf-8') as f:
@@ -33,7 +39,31 @@ def getall_topics():
 
 
 # URL Request Approach
+
+
+
 '''
+url = 'https://www.sicherheitshandbuch.gv.at/'
+download_folder = 'C:/Users/Felix/Downloads/'  
+
+pywebcopy.save_website(url, download_folder)
+
+#HTML = open('resources\test.html').read()
+base_url = 'https://www.sicherheitshandbuch.gv.at' # used as a base for downloading imgs, css, js files.
+project_folder = '/saved_pages/'
+config.setup_config(base_url, project_folder)
+
+wp = WebPage()
+wp.get(url)
+#wp.set_source(HTML)
+#wp.url = base_url
+wp.save()
+'''
+
+
+
+'''
+urllib.request.urlretrieve('https://www.sicherheitshandbuch.gv.at/', 'C:/Users/Felix/Downloads/test.html')
 content = urllib.request.urlopen('https://www.sicherheitshandbuch.gv.at/')
 read_content = content.read()
 soup = BeautifulSoup(read_content,'html.parser')
