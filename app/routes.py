@@ -1,7 +1,8 @@
-from flask import render_template, request, jsonify, url_for
+from flask import Flask, render_template, request, jsonify, url_for
 from app import app, measures_api, mitre_api, evidence_api
 from flask_pymongo import PyMongo
 from werkzeug.utils import redirect
+
 
 
 # Connection to Database
@@ -27,9 +28,16 @@ def get_technique():
 
     return render_template('technique.html', title='Choose Technique', techniques = techniques)
 
-@app.route('/update')
-def update_elements():
+@app.route('/updatetechniques')
+def update_tec():
     mitre_api.update_techniques()
+    return redirect(url_for('index'))
+    
+
+@app.route('/updatemeasures')
+def update_meas():
+    #measures_api.pull_url()
+    measures_api.update_measures()
     return redirect(url_for('index'))
 
 @app.route('/reviewmeas')

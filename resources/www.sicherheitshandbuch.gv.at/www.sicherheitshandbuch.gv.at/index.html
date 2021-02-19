@@ -1,0 +1,575 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html lang="de" dir="ltr">
+<!--
+
+* AerWebCopy Engine [version 6.3.0]
+* Copyright Aeroson Systems & Co.
+* File mirrored from https://www.sicherheitshandbuch.gv.at/
+* At UTC time: 2021-02-19 17:44:27.566735
+
+--><head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>&#214;sterreichisches Informationssicherheitshandbuch</title>
+
+	<link rel="stylesheet" type="text/css" href="dojo-release-1.7.12/dijit/themes/claro/08125422__claro.css">
+	<link rel="stylesheet" type="text/css" href="dojo-release-1.7.12/dojo/resources/09630d24__dojo.css">
+	<link rel="stylesheet" type="text/css" href="css/a91ee8bb__main.css">
+	
+	<script src="dojo-release-1.7.12/dojo/1d7a9b89__dojo.js" data-dojo-config="locale: 'de-at', parseOnLoad: true, debugAtAllCosts: false, async: true"></script>
+	
+	<script src="js/06667d84__functions.js"></script>
+	<script src="js/fcc0a598__myUploadDialog.js"></script>
+	
+	<script type="text/javascript">
+		var theJSON;
+		var theModel;
+		var lesebereichTabsNum = 1;
+		var lastSelectedTreeItem = null;
+		var filterString = "";
+		var journal = new Journal();
+		journal.addEntry("init", "true");
+		var isFirstStart = true;
+		/* ********* */
+		
+		require (["dojo/dom", "dojo/on", "dojo/aspect", "dojo/mouse", "dijit/registry", "dojo/parser", "dijit/tree/ForestStoreModel", "dojo/data/ItemFileWriteStore", "dojo/data/ItemFileReadStore", "dijit/layout/BorderContainer", "dijit/layout/ContentPane", 
+			"dijit/layout/TabContainer", "dijit/MenuBar", "dijit/PopupMenuBarItem", "dijit/DropDownMenu", "dijit/MenuItem", "dijit/Dialog", "dijit/form/Button", "dijit/form/ComboBox", "dijit/Tree", "dijit/tree/dndSource", 
+			"dojo/io/iframe", "dojox/form/uploader/plugins/IFrame", "dojox/json/query", "dojox/html/entities"], 
+			function(dom, on, aspect, mouse, registry, parser, ForestStoreModel, ItemFileWriteStore){
+				var handler = on(document, "mousedown", function(evt){
+						if (!evt) 
+							var evt = window.event;
+
+						if (evt.target) 
+							srcEl = evt.target;
+						else 
+							if (!evt.srcEelement) 
+								srcEl = evt.srcElement;
+
+						(mouse.isLeft(evt)) ? check4LeftClick(srcEl, dom) : false;
+						(mouse.isRight(evt)) ? callContextOnDivClass(srcEl, registry) : false;
+					}
+				);
+				
+				theJSON = new ItemFileWriteStore ({
+					url:"data/sihaindex.json",
+					hierachical: true
+				});
+				
+				theModel = new ForestStoreModel ({
+					store:theJSON, 
+					rootId: "root",
+					rootLabel: "Sicherheitshandbuch",
+					childrenAttrs:["children"]
+				});
+			}
+		);
+		
+		require (["dojo/ready","dojo/domReady!"], function(ready){
+			ready(function(){		
+				initCustomContext();
+								sihaTree.set('paths', [['root','all','100001']]);
+				sihaTree.set('paths', [['root','all']]);
+				lesebereichTabSiHa._load();
+			});
+		});
+		
+		function getUidFromDomId (uid) {
+			var arr;
+			if(uid.indexOf("chapter_") != -1)
+				arr = uid.split("chapter_");
+			if(uid.indexOf("section_") != -1)
+				arr = uid.split("section_");
+			if(uid.indexOf("topic_") != -1)
+				arr = uid.split("topic_");
+			return arr[1];
+		}
+		
+		function getParents(uid) {
+			var parentsArray = [];
+			var parent = uid;
+			parentsArray.push(uid);
+			while (parent != 'all') {
+				parent = getParent(parent);
+				parentsArray.push(parent);
+			}
+			parentsArray.push('root');
+			return parentsArray.reverse();
+		}
+
+		function getParent(uid) {
+			var finding;
+			theModel.fetchItemByIdentity({
+				identity: uid,
+				onItem : function (item, request) {
+					var parentUid;
+					parentUid = Object.getOwnPropertyNames(item._RRM)[0];
+					finding = parentUid;
+				}
+			});
+			return finding;
+		}
+		
+		function setLinkOnInactiveTab(selUid) {
+			if(isFirstStart) {
+				lesebereichTabSiHa.attr("onDownloadEnd",function() {
+					window.location.hash = selUid;
+				});
+				lesebereich.selectChild(lesebereichTabSiHa);
+				isFirstStart = false;
+				window.location.hash = selUid;
+			} else {
+				lesebereich.selectChild(lesebereichTabSiHa);
+				window.location.hash = selUid;
+			}
+			var path = getParents(selUid.toString());
+			sihaTree.set('path', path).then(function(){ sihaTree.focusNode(sihaTree.selectedNode); });
+		}
+		
+		function highlight (text, keyword) {
+			//var re = new RegExp(keyword.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'),"g");
+			var re = new RegExp("(" + keyword + ")(?![^<]*>)","g");
+			//var re = new RegExp(keyword,"g");
+			return text.replace(re, "<mark>" + keyword + "</mark>");
+		}
+		
+		function unhighlight () {
+			var markedSiHa = [...dijit_layout_ContentPane_1.querySelectorAll('.chapter')];
+			markedSiHa.forEach(function(chapter) {
+				chapter.outerHTML = chapter.outerHTML.replace(/(<mark>|<\/mark>)/g, "");
+			});
+			return true;
+		}
+	</script>
+	
+</head>
+<body class="claro" style="width:100%;height:100%">
+		<div data-dojo-id="uploadDialog" data-dojo-type="dijit.Dialog" title="Hochladen" style="width:300px">
+			<h1>Auswahl laden</h1><br>
+			<form method="post" action="./a5ac5e46__contentGenerator.php" id="uploadForm" enctype="multipart/form-data">
+				<input name="uploadFile" multiple type="file" accept=".xml,text/xml,application/xml" data-dojo-type="dojox.form.Uploader" aria-label="Datei(en) ausw&#228;hlen" label="Datei(en) ausw&#228;hlen" id="uploader" style="width:150px">
+				<input name="type" type="hidden" value="file">
+				<input id="uploadFormJournal" name="journal" type="hidden" value="">
+			</form>
+			<br>
+			<button data-dojo-type="dijit.form.Button">
+				Datei(en) hochladen
+				<script type="dojo/on" data-dojo-event="click">
+					require(["dojo/dom", "dojo/json", "dojo/io/iframe"], function(dom, json, ioIframe){
+						dom.byId("uploadFormJournal").value = journal.toString();
+						var _tmpResult  = ioIframe.send({
+							form: "uploadForm",
+
+							load: function(response,ioArgs) {
+								if(!response)
+									return false;
+								var _tmpFromJson = json.parse(response);
+								addSelectionFromFile(_tmpFromJson.items);
+								uploadDialog.hide();
+
+								return response;
+							}
+						});
+
+						journal.entries = new Array();
+					});
+				</script>
+			</button>
+		</div>
+
+		<div data-dojo-id="filterDialog" data-dojo-type="dijit.Dialog" title="Filter" style="width:680px">
+			<h1>Filter festlegen</h1>
+			<p>Sie k&#246;nnen hier Filter festlegen. Wenn Sie dies getan haben, wird im Lesebereich ein neuer Tab mit aktiven Filtern ge&#246;ffnet.</p>
+			<button data-dojo-type="dijit.form.Button">
+				Filter hinzuf&#252;gen
+				<script type="dojo/on" data-dojo-event="click">
+					require(["dojo/dom", "dijit/registry", "dojo/dom-attr"], function(dom, registry, domAttr){
+						if (filterString == "")
+							dom.byId("filterDialogFilterDefinitionText").innerHTML = "";
+
+						(function()
+							{
+								var txtStr = "";
+								dom.byId("filterDialogFilterDefinition").childNodes.forEach( function (x) {
+									if (domAttr.get(x,"role"))
+									{
+										txtStr += registry.byId(domAttr.get(x,"widgetid")).value+" ";
+										if ( registry.byId(domAttr.get(x,"widgetid")).name == "inverse")
+											filterString += "{";
+										filterString += "'"+(registry.byId(domAttr.get(x,'widgetid')).name)+"':'"+(registry.byId(domAttr.get(x,'widgetid')).value)+"'";
+										if ( registry.byId(domAttr.get(x,"widgetid")).name == "link")
+											filterString += "},";
+										else
+											filterString += ",";
+									}
+								});
+								txtStr = "";
+								dom.byId("filterDialogFilterDefinitionText").innerHTML += txtStr+"<br>";
+								
+							})()
+					});
+				</script>
+			</button>
+			<button data-dojo-type="dijit.form.Button">
+				Filter aktivieren
+				<script type="dojo/on" data-dojo-event="click">
+					if (filterString == "")
+						alert("Es sind keine Filter aktiv! Bitte fuegen Sie zuerst Filter hinzu.");
+					else
+					{
+						var _tmpStr = "filter=["+filterString;
+
+						_tmpStr = _tmpStr.substr(0,_tmpStr.length-1);
+						_tmpStr += "]";
+
+						(function () {
+							var tmpTab = new dijit.layout.ContentPane({
+								title:"Sicherheitshandbuch-Filter", 
+								refreshOnShow:false, 
+								preventCache:true, 
+								closable:true, 
+								href:getURL("contentGenerator.php?type=filter&"+_tmpStr)});
+							lesebereich.addChild(tmpTab);
+							lesebereich.selectChild(tmpTab);
+						})()
+						filterDialog.hide();
+					}
+				</script>
+			</button>
+			<button data-dojo-type="dijit.form.Button">
+				Zur&#252;cksetzen
+				<script type="dojo/on" data-dojo-event="click">
+					require(["dojo/dom"], function(dom){
+						filterString = "";
+						dom.byId("filterDialogFilterDefinitionText").innerHTML = "<em>Es wurden keine Filter hinzugef&uuml;gt</em><br>";
+					});
+				</script>
+			</button>
+			<br>
+			<div id="filterDialogFilterDefinition">
+			
+				<select data-dojo-type="dijit.form.ComboBox" title="Negation" id="inverse" name="inverse" style="width:70px">
+					<option selected> </option>
+					<option>NICHT</option>
+				</select>
+				<select data-dojo-type="dijit.form.ComboBox" title="Bereich" id="bereich" name="bereich">
+					<option selected>Funktion</option>
+				</select>
+				<select data-dojo-type="dijit.form.ComboBox" title="Wert" id="wert" name="wert">
+					<option selected>Management</option>
+					<option>Si-Beauftragte</option>
+					<option>Wartung</option>
+					<option>Benutzer</option>
+					<option>Revision</option>
+				</select>
+				<select data-dojo-type="dijit.form.ComboBox" title="Verkn&#252;pfung" id="link" name="link" style="width:70px">
+					<option></option>
+					<option selected>UND</option>
+					<option>ODER</option>
+				</select>
+				<br><br>
+				<span id="filterDialogFilterDefinitionText" value="false">
+					<em>Es wurden noch keine Filter hinzugef&#252;gt</em><br>
+				</span><br>
+			</div><br>
+		</div>
+
+		<noscript>
+			<div id="noScript">
+				Weiterleitung
+				<meta http-equiv="refresh" content="0;URL=./95b74696__siha.php">
+			</div>			
+		</noscript>
+		<!-- HEADER -->
+		<div id="pagewidth">
+			<div id="wrapper" class="clearfix">
+				<div id="headerright"><img src="img/layout/12e35b8a__balken.jpg" alt="" width="688" height="91" border="0"></div>
+				<div id="headerleft"><a href="#" onclick="document.location.href='index.php'" valign="top"><img src="img/layout/ea68f1c0__logo_neu.png" alt="Link zur Startseite" border="0" height="32"><br><img src="img/layout/36f463c9__bka_logo_h18.png" alt="" border="0" height="32" style="padding-top:10px"></a></div>
+			</div>
+		</div>
+		<!-- /HEADER -->
+		<!-- BUTTON Leiste -->
+		<div id="buttonswidth">
+			<div data-dojo-type="dijit.MenuBar" id="buttonwrapper" class="clearfix">
+				<div id="buttonsleft">
+					<div data-dojo-type="dijit.PopupMenuBarItem">
+						<span>Ansicht</span>
+						<div data-dojo-type="dijit.DropDownMenu" id="ansichtMenu">
+								<div data-dojo-type="dijit.MenuItem">
+									Anfangseite &#246;ffnen
+									<script type="dojo/on" data-dojo-event="click">
+										require(["dijit/registry", "dijit/layout/ContentPane"], function(registry, ContentPane){
+											if (registry.byId("lesebereichTabWelcome"))
+												lesebereich.selectChild(registry.byId("lesebereichTabWelcome"));
+											else
+											{
+												lesebereichTabsNum++;
+												var lesebereichTabWelcome = new ContentPane({title:"Willkommen", closable:"true", href:"welcome.html", id:"lesebereichTabWelcome"});
+												lesebereich.addChild(lesebereichTabWelcome);
+												lesebereich.selectChild(lesebereichTabWelcome);
+											}
+										});
+									</script>
+								</div>
+						</div>
+					</div>
+					<div data-dojo-type="dijit.PopupMenuBarItem">
+						<span>Auswahl</span>
+						<div data-dojo-type="dijit.DropDownMenu" id="auswahlMenu">
+							<div data-dojo-type="dijit.MenuItem">
+								Neue Auswahl
+								<script type="dojo/on" data-dojo-event="click">
+									var newSel = addSelection();
+									listStore[getListindexById(newSel)].addUID("101");
+								</script>
+							</div>
+							<div data-dojo-type="dijit.MenuItem">
+								Auswahl Laden
+								<script type="dojo/on" data-dojo-event="click">
+									uploadDialog.show();
+								</script>
+							</div>
+						</div>
+					</div>
+					<div data-dojo-type="dijit.PopupMenuBarItem">
+						<span>Optionen</span>
+						<div data-dojo-type="dijit.DropDownMenu" id="optionenMenu">
+							<div data-dojo-type="dijit.MenuItem">
+								Filter
+								<script type="dojo/on" data-dojo-event="click">
+									filterDialog.show();
+								</script>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="buttonsright">
+					<div data-dojo-type="dijit.PopupMenuBarItem">
+						<span>?</span>
+						<div data-dojo-type="dijit.DropDownMenu" id="help">
+							<div data-dojo-type="dijit.MenuItem" id="impressum">
+								Impressum
+								<script type="dojo/on" data-dojo-event="click">
+									require(["dijit/registry", "dijit/layout/ContentPane"], function(registry, ContentPane){
+										if (registry.byId("lesebereichImpressum"))
+											lesebereich.selectChild(registry.byId("lesebereichImpressum"));
+										else
+										{
+											lesebereichTabsNum++;
+											var lesebereichTabImpressum = new ContentPane({title:"Impressum", closable:"true", href:"impressum.html", id:"lesebereichImpressum"});
+											lesebereich.addChild(lesebereichTabImpressum);
+											lesebereich.selectChild(lesebereichTabImpressum);
+										}
+									});
+								</script>
+							</div>
+							<div data-dojo-type="dijit.MenuItem" id="hilfe">
+								Hilfe
+								<script type="dojo/on" data-dojo-event="click">
+									openHelp();
+								</script>
+							</div>
+						</div>
+					</div>	
+					<div data-dojo-type="dijit.form.Button" aria-label="Schrift vergr&#246;&#223;ern">
+						<span class="small">A</span><span class="big">A</span>
+							<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+								resizeFont(document.body,+.1);
+							</script>
+					</div>
+					<div data-dojo-type="dijit.form.Button" aria-label="Schrift verkleinern">
+						<span class="big">A</span><span class="small">A</span>
+						<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+							resizeFont(document.body,-.1);
+						</script>
+					</div>
+
+					<div data-dojo-type="dijit.form.Button">
+						Drucken
+						<script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+							openPrint();
+						</script>
+					</div>
+					<input type="search" id="siteSearch" name="suche" placeholder="Suche" aria-label="Suchfeld" required="true">
+					<script>
+						document.getElementById("siteSearch").addEventListener("keyup", function(event) {
+						  if (event.keyCode === 13) {
+							event.preventDefault();
+							document.getElementById("btnSearch").click();
+						  }
+						});
+					</script>
+					<button id="btnSearch" data-dojo-type="dijit.form.Button">
+						Suchen
+						<script type="dojo/on" data-dojo-event="click">
+						require(["dojo/dom", "dijit/registry"], function(dom, registry){
+							var keyWord = dom.byId("siteSearch").value;
+							if(keyWord == "") 
+								return;
+							var sanitizeDiv = document.createElement('div');
+							sanitizeDiv.innerHTML = keyWord;
+							keyWord = sanitizeDiv.textContent || sanitizeDiv.innerText || "";
+							if(keyWord == "") 
+								return;
+							var results = [];
+							
+							if (registry.byId("lesebereichTabSearch")) {
+								unhighlight();
+							}
+							
+							var chapters = [...dijit_layout_ContentPane_1.querySelectorAll('.chapter')];
+							chapters.forEach(function(chapter) { 
+								var foundInChapter = false;
+								chapter.childNodes.forEach(function(chapterChild) {
+									if(chapterChild.className == "section"){
+										var foundInSection = false;
+										chapterChild.childNodes.forEach(function(sectionChild) {
+											if(sectionChild.className == "topic"){
+												if(sectionChild.innerText.indexOf(keyWord) !== -1) {
+													results.push(sectionChild);
+													sectionChild.outerHTML = highlight(sectionChild.outerHTML, keyWord);
+												}
+											} else {
+												if (sectionChild.innerText && sectionChild.innerText.indexOf(keyWord) !== -1) {
+													if(!foundInSection){
+														results.push(chapterChild);
+														foundInSection = true;
+													}
+													sectionChild.outerHTML = highlight(sectionChild.outerHTML, keyWord);
+												}
+											}
+										});
+									} else {
+										if (chapterChild.innerText && chapterChild.innerText.indexOf(keyWord) !== -1) {
+											if(!foundInChapter){
+												results.push(chapter);
+												foundInChapter = true;
+											}
+											chapterChild.outerHTML = highlight(chapterChild.outerHTML, keyWord);
+										}
+									}
+								});
+							});
+							
+							var resultsTemplate = '<h1 class="greyheader">Suchergebnisse f&uuml;r "' + keyWord + '"</h1></br><div id="resultsContainer">';
+							if(results.length > 0){
+								results.forEach(function(result) {
+									var resultUid = getUidFromDomId(result.id);
+									var resultTitle;
+									var intro = "";
+									theJSON.fetchItemByIdentity({
+										identity : resultUid,
+										onItem : function(item,request) {
+											resultTitle = theJSON.getValue(item,"title");
+										}
+									});
+
+									if(result.getElementsByTagName("div")[0])
+									{
+										if(result.getElementsByTagName("div")[0].innerText.length > 200)
+										{
+											intro = result.getElementsByTagName("div")[0].innerText.substring(0, 200) + '...';
+										} else {
+											intro = result.getElementsByTagName("div")[0].innerText;
+										}
+									}
+									resultsTemplate += '<div class="resultitem"><a href="javascript:setLinkOnInactiveTab(' + resultUid + ');" class="result-link" style="text-decoration: none;"><h2>' + resultTitle + '</h2><p style="color: black;">'
+										+ intro + '</p></a></div>';
+								});
+							} else {
+								resultsTemplate += '<div class="noresultitem"></br></br>Keine Suchergebnisse gefunden.</div>';
+							}
+							resultsTemplate += '</div>';
+							
+							if (registry.byId("lesebereichTabSearch"))
+								lesebereich.selectChild(registry.byId("lesebereichTabSearch"));
+							else
+							{
+								lesebereichTabsNum++;
+								var lesebereichTabSearch = new dijit.layout.ContentPane({title:"Suche", closable:"true", onClose:function(){return unhighlight();}, id:"lesebereichTabSearch"});
+								lesebereich.addChild(lesebereichTabSearch);
+								lesebereich.selectChild(lesebereichTabSearch);
+							}
+							registry.byId("lesebereichTabSearch").set('content', resultsTemplate);
+						});
+						</script>
+					</button>
+				</div>
+			</div>
+		</div>
+		<!-- /BUTTON Leiste -->
+		<!-- HAUPTBEREICH -->
+		<div data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="gutters:true, liveSplitters:false" style="border-top:solid 1px; margin:0px; padding:0px; left:0px; bottom:0px; right:0px; top:0px; width:100%; height:83%">
+			<div data-dojo-type="dijit.layout.ContentPane" class="cpWidgetbar" data-dojo-props="splitter:true, region:'left'" style="overflow: auto; width: 20%;"> 
+				<div data-dojo-type="dijit.Tree" data-dojo-id="sihaTree" id="sihaTree" data-dojo-props="model: theModel, showRoot: false">
+					<script type="dojo/on" data-dojo-event="click" data-dojo-args="item,treeNode">
+						require(["dojo/dom", "dijit/registry", "dijit/layout/ContentPane"], function(dom, registry, ContentPane){
+							lastSelectedTreeItem = item;
+							if (theJSON.getValue(item,"type") == "auswahl")
+							{
+								var tmpTitle = theJSON.getValue(item,"title");
+								var tmpId = theJSON.getValue(item,"uid");
+								if(isSelectionItem(tmpId)){
+									tmpTitle = getSelectionTitleFromItem(tmpId)
+								}
+
+								if (registry.byId("lesebereichView"+tmpTitle))
+									lesebereich.selectChild(registry.byId("lesebereichView"+tmpTitle));
+								else
+								{
+									lesebereichTabsNum++;
+
+									(function () {
+										var _tmp = dom.byId("lesebereichView"+tmpTitle);
+										var tmpTab = new ContentPane({
+											title:tmpTitle, 
+											refreshOnShow:true, 
+											preventCache:false, 
+											closable:true, 
+											href:getURL("contentGenerator.php?type=selView&selection="+getSelectionUidListByTitle(tmpTitle)), 
+											id:"lesebereichView"+tmpTitle});
+
+										lesebereich.addChild(tmpTab);
+										lesebereich.selectChild(tmpTab);
+									
+									})()
+								}							
+							}
+
+							if (theJSON.getValue(item,"type") == "siha")
+							{
+								var selUid = theJSON.getValue(item,"uid");
+								if (lesebereich.selectedChildWidget != lesebereichTabSiHa)
+								{
+									if(isFirstStart) {
+										lesebereichTabSiHa.attr("onDownloadEnd",function() {
+											window.location.hash = selUid;
+										});
+										lesebereich.selectChild(lesebereichTabSiHa);
+										isFirstStart = false;
+										window.location.hash = selUid;
+									} else {
+										lesebereich.selectChild(lesebereichTabSiHa);
+										window.location.hash = selUid;
+									}
+								} else {
+									window.location.hash = selUid;
+								}
+								
+								var nodes = sihaTree.getNodesByItem(selUid);
+								if(!nodes[0].isExpanded){
+									sihaTree._expandNode(nodes[0]);
+								} else {
+									sihaTree._collapseNode(nodes[0]);
+								}
+							}
+						});
+					</script>
+				</div>
+			</div>
+			<div data-dojo-type="dijit.layout.TabContainer" data-dojo-id="lesebereich" data-dojo-props="splitter:true, region:'center'" style="width:100%;height:100%;left:0px;bottom:0px;top:0px;right:0px;margin:0px;padding:0px;">
+				<div data-dojo-type="dijit.layout.ContentPane" data-dojo-id="lesebereichTabWelcome" id="lesebereichTabWelcome" title="Willkommen" data-dojo-props="refreshOnShow:false, closable:true, href:'welcome.html'"></div>
+				<div data-dojo-type="dijit.layout.ContentPane" data-dojo-id="lesebereichTabSiHa" title="Sicherheitshandbuch" data-dojo-props="refreshOnShow:false, href:'data/sihacontent.html'"></div>
+			</div> 
+		</div>
+</body>
+</html>
