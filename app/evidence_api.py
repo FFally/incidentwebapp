@@ -1,6 +1,6 @@
 
 # relevant evidence question
-evidencelist = ["Violation from analysis of Interviews with Involved Individuals", "Violation from analysis of relevant collected system data","Violation from Analysis of Incident Reports"]
+evidencelist = ["Violation identified from analysis of User Ticket", "Violation identified from analysis of relevant collected system data","Violation identified from analysis of Incident Reports"]
 
 
 # get all evidence questions

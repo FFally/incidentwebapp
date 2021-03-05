@@ -1,13 +1,18 @@
 from flask import Flask, render_template, request, jsonify, url_for
-from app import app, measures_api, mitre_api, evidence_api
+from app import app, measures_api, mitre_api, evidence_api, cases_api
 from flask_pymongo import PyMongo
 from werkzeug.utils import redirect
 
 
-
 # Connection to Database
+'''
 mongodb_client = PyMongo(app, uri="mongodb://localhost:27017/incidentwebapp_DB")
 db = mongodb_client.db
+'''
+
+# PyMongo Connection Approach
+app.config["MONGO_URI"] = "mongodb://localhost:27017/incidentwebapp_DB"
+mongo = PyMongo(app)
 
 
 @app.route('/')
@@ -16,17 +21,6 @@ def index():
     user = {'username': 'Felix'}
     return render_template('index.html', title='Home', user=user)
 
-@app.route('/technique')
-def get_technique():
-    # Get Technique directly from MITRE ATT&CK Server -> always up to date, but slow
-    '''
-    phishing_id = "T1566"
-    technique = mitre_api.get_technique(id)
-    '''
-    # Get all available Techniques from Database
-    techniques = list(db.techniques.find({}))
-
-    return render_template('technique.html', title='Choose Technique', techniques = techniques)
 
 @app.route('/updatetechniques')
 def update_tec():
@@ -40,11 +34,47 @@ def update_meas():
     measures_api.update_measures()
     return redirect(url_for('index'))
 
+@app.route('/technique')
+def get_technique():
+    # Get Technique directly from MITRE ATT&CK Server -> always up to date, but slow
+    '''
+    phishing_id = "T1566"
+    technique = mitre_api.get_technique(id)
+    '''
+    # Get all available Techniques from Database
+    techniques = list(mongo.db.techniques.find({}))
+
+    return render_template('technique.html', title='Choose Technique', techniques = techniques)    
+
+
+@app.route('/case')
+def select_case():
+    return render_template('cases.html', title='Choose TestCase')
+
+@app.route('/case', methods=['POST'])
+def get_case():
+    global testset
+
+    if "testset_1" in request.form:
+        testset = cases_api.get_testset_1()
+        
+    elif "testset_2" in request.form:
+        testset = cases_api.get_testset_2()
+
+    elif "testset_3" in request.form:
+        testset = cases_api.get_testset_3()
+    
+    #DELETE FROM DB AND INSERT NEW
+    mongo.db.testset.drop()
+    mongo.db.testset.insert(testset)
+    return redirect(url_for('taskgetall'))
+
+
 @app.route('/reviewmeas')
 def taskgetall():
     global measurelist
     measurelist = measures_api.getall_topics()
-    return render_template('review_meas.html', title='Review Measures', measurelist = measurelist )
+    return render_template('review_meas.html', title='Review Measures', measurelist = measurelist)
 
 @app.route('/reviewmeas', methods=['POST'])
 def get_userinput():
@@ -70,12 +100,20 @@ def get_userinput():
     else:
         return render_template('policycoverage.html', title='Policy Coverage', policylist = policylist, addmeas = addmeas)
 
-  
+
+@app.route('/inspect')
+def inspect_evidence():
+    testset = list(mongo.db.testset.find({}, {'_id': False}))
+    return render_template('inspect.html', title='Inspect Evidence', testset = testset)
+
+
+
 @app.route('/analysis')
 def get_evidence():
     global evidencelist
     evidencelist = evidence_api.getall_evidences()
-    return render_template('analysis.html', title='Analyse Evidence', evidencelist = evidencelist)
+    testset = list(mongo.db.testset.find({}, {'_id': False}))
+    return render_template('analysis.html', title='Analyse Evidence', evidencelist = evidencelist, testset = testset)
     
 
 @app.route('/analysis', methods=['POST'])
@@ -88,6 +126,7 @@ def get_evidenceinput():
         answer["violation"] = request.form[evidencelist[i]["id"]]
         answerlist.append(answer)
 
+    print(answerlist)
     ownanalysis = {}
     ownanalysis["ownquestion"] = request.form["addanalysis"]
     ownanalysis["violation"] = request.form["own_violation"]
@@ -103,4 +142,3 @@ def get_evidenceinput():
         return render_template('pol_applied.html', title='Policy applied', answerlist = answerlist, ownanalysis = ownanalysis)
 
 
-   

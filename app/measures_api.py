@@ -10,7 +10,7 @@ with open("resources\www.sicherheitshandbuch.gv.at\www.sicherheitshandbuch.gv.at
 soup = BeautifulSoup(text,'html.parser')
 
 # relevant measures for Phishing -> can be updated by Inspecting "https://www.sicherheitshandbuch.gv.at/"
-meas_list = ["topic_733","topic_747","topic_738","topic_741","topic_754"]
+meas_list = ["topic_733","topic_747","topic_738","topic_741"]
 
 # put measure into python dictionary
 def find_byid(topic):

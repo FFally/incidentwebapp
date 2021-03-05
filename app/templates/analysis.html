@@ -1,22 +1,50 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div>
 <h1>Analyse Evidence</h1>
 {% for evidence in evidencelist %}
-<div>
-    <h2>{{ evidence.question }} ?:</h2>
-</div>
+
+    <h2>{{ evidence.question }}? :</h2>
+
 <div class="form">
     <form method="POST" action="/analysis">
-        <label class="container"><b>Has there been a violation?</b>
+        <label class="container">
             <input type="radio" name="{{evidence.id}}" value="TRUE"> Yes
             <input type="radio" name="{{evidence.id}}" value="FALSE" checked> No
         </label>
         <br><br>
+ 
+</div>    
+<div>
+    <button type="button" onclick="toggle{{ loop.index }}()">Show Evidence #{{ loop.index }}</button>
+    
+    <div id="ev_element{{ loop.index }}" style="display:none">
+        <div style="border:2px solid Gray;">
+            <h3 style="color:Tomato;">Evidence #{{ loop.index }}:</h3>
+        {% for key, value in testset[loop.index0].items() %}
+      <p><b>{{key}}:</b></p>
+      <p>{{value}}</p>
         {% endfor %}
-        <h2>Has there been any additional Analysis?</h2>
+        </div>
+    </div>
+    
+        <script>
+            function toggle{{ loop.index }}() {
+            var x = document.getElementById("ev_element{{ loop.index }}");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+            }
+        </script>
+
+        {% endfor %}
+
+        <h2>Violation identified from analysis of any additional violation? :</h2>
         <textarea id="ownanalysis" name="addanalysis" rows="4" cols="50">Please enter here.</textarea> <br>
-        <label class="container"><b>Has there been a violation?</b>
+        <label class="container">
             <input type="radio" name="own_violation" value="TRUE"> Yes
             <input type="radio" name="own_violation" value="FALSE" checked> No
         </label>
@@ -25,5 +53,5 @@
     </form>
 </div>
 <br>
-
+</div>
 {% endblock %}

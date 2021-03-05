@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Evidence to inspect:</h2>
+{% for dict_item in testset %}
+<div style="border:2px solid Gray;">
+    <h3 style="color:Tomato;">Evidence #{{ loop.index }}:</h3>
+{% for key, value in dict_item.items() %}
+      <p><b>{{key}}:</b></p>
+      <p>{{value}}</p>
+{% endfor %}
+</div>
+<br>
+{% endfor %}
+<h2><a href="/analysis">Analyze Evidence</a></h2>
+{% endblock %}
+
