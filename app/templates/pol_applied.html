@@ -1,9 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Incident in spite of policy being applied</h2>
-{% endblock %}
+<h1 style="color:Tomato;">Incident in spite of policy being applied</h1>
+<h2>Your policy concerning "{{ technique.name }}" might need revision. </h2>
+
 {% if ownanalysis.ownquestion != "Please enter here." %}
 <p><b>Your additional analysis:</b></p>
 <p>{{ownanalysis.ownquestion}}</p>
 {% endif %}
+<h3>These are measures you did not consider relevant:</h3>
+{% for policy in policylist %}
+<div>
+    {% if policy.relevant == "FALSE" %}
+    <p><b>{{ policy.title }}</b></p>
+    <button type="button" onclick="toggle{{ loop.index }}()">Show Details</button>
+    <div id="ev_element{{ loop.index }}" style="display:none">   
+             {{ policy.description|safe }}
+    </div>
+
+        <script>
+            function toggle{{ loop.index }}() {
+            var x = document.getElementById("ev_element{{ loop.index }}");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+            }
+        </script>
+    {% endif %}
+</div>
+{% endfor %}
+{% endblock %}

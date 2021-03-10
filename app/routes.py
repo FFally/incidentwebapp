@@ -34,17 +34,27 @@ def update_meas():
     measures_api.update_measures()
     return redirect(url_for('index'))
 
-@app.route('/technique')
+@app.route('/technique', methods=['GET', 'POST'])
 def get_technique():
-    # Get Technique directly from MITRE ATT&CK Server -> always up to date, but slow
-    '''
-    phishing_id = "T1566"
-    technique = mitre_api.get_technique(id)
-    '''
-    # Get all available Techniques from Database
-    techniques = list(mongo.db.techniques.find({}))
 
-    return render_template('technique.html', title='Choose Technique', techniques = techniques)    
+    if request.method == 'GET':
+        # Get Technique directly from MITRE ATT&CK Server -> always up to date, but slow
+        '''
+        phishing_id = "T1566"
+        technique = mitre_api.get_technique(id)
+        '''
+        # Get all available Techniques from Database
+        techniques = list(mongo.db.techniques.find({}))
+        return render_template('technique.html', title='Choose Technique', techniques = techniques)   
+    elif request.method == 'POST':
+         tec = request.form["answer"]
+         dbres = mongo.db.techniques.find_one_and_update({"name": tec}, {"$set": {'chosen': True}})
+         measures_api.update_measures()
+        
+
+         return redirect(url_for('select_case'))
+
+     
 
 
 @app.route('/case')
@@ -79,16 +89,31 @@ def taskgetall():
 @app.route('/reviewmeas', methods=['POST'])
 def get_userinput():
 
+    #old_Approach_without database
+    '''
     policylist = []
+    
     for i in range(len(measurelist)):
         answer = {}
-        check = measurelist[i]["topic"]
+
+        apl = measurelist[i]["topic"]
         answer["topic"] = measurelist[i]["topic"]
         answer["title"] = measurelist[i]["title"]
         answer["description"] = measurelist[i]["description"]
-        answer["applied"] = request.form[check]
+        answer["relevant"] = request.form["rel_"+str(apl)] 
+        answer["applied"] = request.form[apl]
         policylist.append(answer)
-     
+     '''
+    dbmeasurelist = list(mongo.db.measures.find({}))
+
+    for i in range(len(dbmeasurelist)):
+        topic = dbmeasurelist[i]["topic"]
+        rel = request.form["rel_"+str(topic)] 
+        apl = request.form[topic]
+        mongo.db.measures.find_one_and_update({"topic": topic}, {"$set": {'applied': apl, 'relevant': rel}})
+
+    policylist = list(mongo.db.measures.find({}))
+
     addmeas = request.form["addmeas"] 
     #Results Measures Analysis
     one_applied = "TRUE"
@@ -139,6 +164,11 @@ def get_evidenceinput():
     if one_violated == "TRUE" or ownanalysis["violation"] == "TRUE":
         return render_template('pol_violated.html', title='Policy Violation', answerlist = answerlist, ownanalysis = ownanalysis)
     else:
-        return render_template('pol_applied.html', title='Policy applied', answerlist = answerlist, ownanalysis = ownanalysis)
+        technique = mongo.db.techniques.find_one({'chosen': True})
+        policylist = list(mongo.db.measures.find({}))
+        return render_template('pol_applied.html', title='Policy applied', answerlist = answerlist, ownanalysis = ownanalysis, technique = technique, policylist = policylist)
 
 
+@app.route('/end', methods=['GET'])
+def get_earlyend():
+    return render_template('earlyend.html', title='End')

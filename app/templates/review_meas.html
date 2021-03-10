@@ -4,11 +4,33 @@
 <h1>Review Measures</h1>
 {% for measure in measurelist %}
 <div>
-    <p><b>{{ measure.title }}:</b> <br> {{ measure.description }}</p>
+    <h3>{{ measure.title }}</h3>
+<button type="button" onclick="toggle{{ loop.index }}()">Show Details</button>
+<div id="ev_element{{ loop.index }}" style="display:none">   
+{{measure.description|safe}}
 </div>
+
+    <script>
+        function toggle{{ loop.index }}() {
+        var x = document.getElementById("ev_element{{ loop.index }}");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+        }
+    </script>
+
+</div>
+<br>
 <div class="form">
     <form method="POST" action="/reviewmeas">
-        <label class="container"><b>Has this measure been applied?</b>
+        <label class="container"><b>Do you consider this measure as relevant for the incident under investigation?</b>
+            <input type="radio" name="rel_{{measure.topic}}" value= "TRUE" checked> Yes
+            <input type="radio" name="rel_{{measure.topic}}" value="FALSE"> No
+        </label>
+        <br><br>
+        <label class="container"><b>If considered relevant, has this measure been applied?</b>
             <input type="radio" name="{{measure.topic}}" value= "TRUE" checked> Yes
             <input type="radio" name="{{measure.topic}}" value="FALSE"> No
         </label>

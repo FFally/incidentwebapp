@@ -10,9 +10,10 @@ with open("resources\www.sicherheitshandbuch.gv.at\www.sicherheitshandbuch.gv.at
 soup = BeautifulSoup(text,'html.parser')
 
 # relevant measures for Phishing -> can be updated by Inspecting "https://www.sicherheitshandbuch.gv.at/"
-meas_list = ["topic_733","topic_747","topic_738","topic_741"]
+meas_list = ["topic_733", "topic_734","topic_738", "topic_739", "topic_741", "topic_743", "topic_747", "topic_748", "topic_749", "topic_158", "topic_754", "topic_755", "topic_757"]
 
 # put measure into python dictionary
+'''
 def find_byid(topic):
     result = {}
     res_desc = ""
@@ -24,6 +25,17 @@ def find_byid(topic):
     result["title"] = res_title
     result["description"] = res_desc
     result["topic"] = topic
+    return result 
+'''
+
+def find_byid(topic):
+    result = {}
+    res_desc = ""
+    cid = soup.find(id=topic)
+    result["description"] = cid.prettify()
+    result["topic"] = topic
+    result["title"] = cid.find('h3').get_text()
+
     return result 
 
 # return measures in list of dictionaries
@@ -46,17 +58,16 @@ def pull_url():
 # Update Measures in DB
 def update_measures():
     db.measures.drop()
-    print("got here")
     for m in meas_list:
         measure = find_byid(m) 
         db.measures.insert_one({'title': measure["title"], 'description': measure["description"], 'topic': measure["topic"]})
+ 
 
 
 # TESTING
 '''
 print(update_measures())
 '''
-
 
 #BACKUP########################################### 
 

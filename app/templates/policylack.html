@@ -1,11 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Lack of coverage by policy:</h2>
+<h2>"Grundschutz" not fully covered by policy.</h2>
+<h3>Missing elements:</h3>
 {% for policy in policylist %}
 <div>
-    {% if policy.applied == "FALSE" %}
-    <p><b>{{ policy.title }}:</b> <br> {{ policy.description }}</p>
+    {% if policy.relevant == "TRUE" and policy.applied == "FALSE" %}
+    <p><b>{{ policy.title }}</b></p>
+    <button type="button" onclick="toggle{{ loop.index }}()">Show Details</button>
+    <div id="ev_element{{ loop.index }}" style="display:none">   
+             {{ policy.description|safe }}
+    </div>
+
+        <script>
+            function toggle{{ loop.index }}() {
+            var x = document.getElementById("ev_element{{ loop.index }}");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+            }
+        </script>
     {% endif %}
 </div>
 {% endfor %}
@@ -13,5 +29,14 @@
 <p><b>Your additional applied measures:</b></p>
 <p>{{addmeas}}</p>
 {% endif %}
+<h3>Does an additional measure adequately replace the missing "Grundschutz" measure?</h3>
+<form action="\inspect">
+    <input type="submit" value="Yes" />
+</form>
+<form action="\end">
+    <input type="submit" value="No" />
+</form>
 {% endblock %}
+
+
 

@@ -28,7 +28,7 @@ app = Flask("__name__")
 mongodb_client = PyMongo(app, uri="mongodb://localhost:27017/incidentwebapp_DB")
 db = mongodb_client.db
 # List of techniques considered for Incidentwebapp -> can be updated by adding ATT&CK-ID of new Technique into List
-techniques = ["T1566"]
+techniques = ["T1566","T1134"]
 # Upate Techniques in Database
 def update_techniques():
     db.techniques.drop()

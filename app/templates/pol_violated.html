@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Incident caused by policy violation:</h2>
+<h1 style="color:Tomato;">Incident caused by policy violation:</h1>
 {% for answer in answerlist %}
 <div>
     {% if answer.violation == "TRUE" %}
