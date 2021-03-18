@@ -14,7 +14,7 @@ soup2 = BeautifulSoup(text,'html.parser')
 # relevant measures for General -> can be updated by Inspecting "https://www.sicherheitshandbuch.gv.at/"
 meas_list1 = ["topic_733", "topic_734","topic_738", "topic_739", "topic_741", "topic_743", "topic_747", "topic_748", "topic_749", "topic_158", "topic_754", "topic_755", "topic_757"]
 # relevant measures for Phishing -> can be updated by Inspecting "https://www.sicherheitshandbuch.gv.at/"
-meas_list2 = ["topic_865", "topic_430"]
+meas_list2 = ["topic_865", "topic_430", "topic_868", "topic_869", "topic_883", "topic_893", "topic_900", "topic_3038", "topic_909", "topic_911", "topic_20201201", "topic_20201202", "topic_20201203", "topic_20201204", "topic_20201205"]
 # put measure into python dictionary
 '''
 def find_byid(topic):
@@ -31,6 +31,9 @@ def find_byid(topic):
     return result 
 '''
 
+
+
+
 def find_byid(topic):
     result = {}
     cid = soup.find(id=topic)
@@ -46,8 +49,14 @@ def find_byid(topic):
     result["description"] = des.prettify()
     result["topic"] = topic
   
-
     return result 
+
+
+
+
+  
+  
+
 
 # return measures in list of dictionaries
 '''
@@ -81,9 +90,31 @@ def update_measures(choice):
         measure = find_byid(m) 
         db.measures.insert_one({'title': measure["title"], 'description': measure["description"], 'topic': measure["topic"]})
  
+# get whole chapter
+def get_chapter(chapterid): 
+    resultlist = [] 
+    #find chapter
+    cid = soup.find(id=chapterid)
+    for topic in cid(class_="topic"):
+        resultlist.append(find_byid(topic['id']))
+    
+    for r in resultlist: 
+        db.chapter.insert_one(({'title': r["title"], 'description': r["description"], 'topic': r["topic"]}))
 
+# get SHB Structure
+def get_shbindex():
+    resultlist = []
+    cid = soup
+    #find all chapters 
+    for chapter in cid(class_="chapter"):
+        #print(chapter['id'])
+        print(chapter.h1.get_text())
+        for section in chapter(class_="section"):
+            print(section.h2.get_text())
+    
 
 # TESTING
+
 
 #print(update_measures())
 #print(find_byid("topic_733"))
