@@ -34,7 +34,7 @@ def update_techniques():
     db.techniques.drop()
     for t in techniques:
         technique = get_technique(t) 
-        db.techniques.insert_one({'name': technique["name"], 'description': technique["description"]})
+        db.techniques.insert_one({'name': technique["name"], 'description': technique["description"], 'chosen': False})
 
 
 

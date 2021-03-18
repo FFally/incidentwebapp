@@ -19,6 +19,7 @@ mongo = PyMongo(app)
 @app.route('/index')
 def index():
     user = {'username': 'Felix'}
+    mongo.db.techniques.update_many({}, {"$set": {'chosen': False}})
     return render_template('index.html', title='Home', user=user)
 
 
@@ -31,11 +32,12 @@ def update_tec():
 @app.route('/updatemeasures')
 def update_meas():
     #measures_api.pull_url()
-    measures_api.update_measures()
+    
     return redirect(url_for('index'))
 
 @app.route('/technique', methods=['GET', 'POST'])
 def get_technique():
+    
 
     if request.method == 'GET':
         # Get Technique directly from MITRE ATT&CK Server -> always up to date, but slow
@@ -43,16 +45,20 @@ def get_technique():
         phishing_id = "T1566"
         technique = mitre_api.get_technique(id)
         '''
-        # Get all available Techniques from Database
+        # Update and Get all available Techniques from Database
+        
         techniques = list(mongo.db.techniques.find({}))
         return render_template('technique.html', title='Choose Technique', techniques = techniques)   
     elif request.method == 'POST':
-         tec = request.form["answer"]
-         dbres = mongo.db.techniques.find_one_and_update({"name": tec}, {"$set": {'chosen': True}})
-         measures_api.update_measures()
+        tec = request.form["answer"]
+        dbres = mongo.db.techniques.find_one_and_update({"name": tec}, {"$set": {'chosen': True}})
         
+        #load relevant measures set 
+        choice = mongo.db.techniques.find_one({"chosen": True})
+        #load measures for chosen technique
+        measures_api.update_measures(choice["name"])
 
-         return redirect(url_for('select_case'))
+        return redirect(url_for('select_case'))
 
      
 
@@ -82,8 +88,13 @@ def get_case():
 
 @app.route('/reviewmeas')
 def taskgetall():
+    #old Approach with Database
+    '''
     global measurelist
     measurelist = measures_api.getall_topics()
+    '''
+
+    measurelist = list(mongo.db.measures.find({}))    
     return render_template('review_meas.html', title='Review Measures', measurelist = measurelist)
 
 @app.route('/reviewmeas', methods=['POST'])
