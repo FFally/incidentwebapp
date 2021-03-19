@@ -4,6 +4,7 @@ from flask_pymongo import PyMongo
 from werkzeug.utils import redirect
 
 
+
 # Connection to Database
 '''
 mongodb_client = PyMongo(app, uri="mongodb://localhost:27017/incidentwebapp_DB")
@@ -18,7 +19,7 @@ mongo = PyMongo(app)
 @app.route('/')
 @app.route('/index')
 def index():
-    user = {'username': 'Felix'}
+    user = {'username': 'User'}
     mongo.db.techniques.update_many({}, {"$set": {'chosen': False}})
     return render_template('index.html', title='Home', user=user)
 
@@ -31,9 +32,9 @@ def update_tec():
 
 @app.route('/updatemeasures')
 def update_meas():
-    #measures_api.pull_url()
-    
-    return redirect(url_for('index'))
+   measures_api.pull_url()
+   print("finished in routes!!!!!")
+   return redirect(url_for('index'))
 
 @app.route('/technique', methods=['GET', 'POST'])
 def get_technique():

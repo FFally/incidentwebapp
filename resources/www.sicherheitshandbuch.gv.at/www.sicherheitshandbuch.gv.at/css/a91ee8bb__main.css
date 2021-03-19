@@ -174,29 +174,29 @@ p.headermessage:
 a[href $=".pdf"], a[href $=".PDF"],
 a[href *=".pdf#"], a[href *=".PDF#"],
 a[href *=".pdf?"], a[href *=".PDF?"] {
-    background: url(%22img/layout/icons2254164b__document.png) center right no-repeat;
+    background: url("../img/layout/icons/document.png") center right no-repeat;
     padding-right: 17px;
 }
 a[href ^="http://"], a[href ^="https://"] {
    color: #0066BB;
-    background: url(../img/layout/icons/7b1a6ada__external.png) center right no-repeat;
+    background: url(../img/layout/icons/external.png) center right no-repeat;
     padding-right: 13px;
 }
 a[href ^="mailto:"] {
    color: #0066BB;
-    background: url(../img/layout/icons/127abb99__mail_icon.gif) center right no-repeat;
+    background: url(../img/layout/icons/mail_icon.gif) center right no-repeat;
     padding-right: 18px;
 }
 a[href ^="ftp://"] {
    color: #0066BB;
-    background: url(../img/layout/icons/867eb935__file_icon.gif) center right no-repeat;
+    background: url(../img/layout/icons/file_icon.gif) center right no-repeat;
     padding-right: 18px;
 }
 /*
 a[href $=".pdf"]::after, a[href $=".PDF"]::after,
 a[href *=".pdf#"]::after, a[href *=".PDF#"]::after,
 a[href *=".pdf?"]::after, a[href *=".PDF?"]::after {
-    content: url(%22img/layout/icons2254164b__document.png);
+    content: url("../img/layout/icons/document.png");
 	width: 17px;
 	vertical-align: middle;
 }
@@ -206,20 +206,20 @@ a[href $=".midi"], a[href $=".MIDI"],
 a[href $=".mp3"], a[href $=".MP3"],
 a[href $=".wav"], a[href $=".WAV"],
 a[href $=".wma"], a[href $=".WMA"] {
-    background: url(%22img/layout/iconsa8fba17e__audio.png) center left no-repeat;
+    background: url("../img/layout/icons/audio.png") center left no-repeat;
     padding-left: 19px;
 }
 a[href $=".ogm"], a[href $=".OGM"],
 a[href $=".avi"], a[href $=".AVI"],
 a[href $=".mpeg"], a[href $=".MPEG"],
 a[href $=".mpg"], a[href $=".MPG"] {
-    background: url(%22img/layout/icons9fbab99d__video.png) center left no-repeat;
+    background: url("../img/layout/icons/video.png") center left no-repeat;
     padding-left: 19px;
 }
 a[href $=".pdf"], a[href $=".PDF"],
 a[href *=".pdf#"], a[href *=".PDF#"],
 a[href *=".pdf?"], a[href *=".PDF?"] {
-    background: url(%22img/layout/icons2254164b__document.png) center left no-repeat;
+    background: url("../img/layout/icons/document.png") center left no-repeat;
     padding-left: 19px;
 }
 a[href $=".zip"], a[href $=".ZIP"],
@@ -229,7 +229,7 @@ a[href $=".msi"], a[href $=".MSI"],
 a[href $=".dmg"], a[href $=".DMG"],
 a[href $=".gz"], a[href $=".GZ"],
 a[href *=".gzip"], a[href *=".GZIP"] {
-    background: url(%22img/layout/icons7f7003bd__download.png) center left no-repeat;
+    background: url("../img/layout/icons/download.png") center left no-repeat;
     padding-left: 19px;
 }*/
 
@@ -237,5 +237,5 @@ a[href *=".gzip"], a[href *=".GZIP"] {
 * AerWebCopy Engine [version 6.3.0]
 * Copyright Aeroson Systems & Co.
 * File mirrored from https://www.sicherheitshandbuch.gv.at/css/main.css
-* At UTC time: 2021-02-19 14:55:57.478054
+* At UTC time: 2021-03-19 13:32:34.945721
 */

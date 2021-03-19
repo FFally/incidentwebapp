@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from pywebcopy import save_webpage
+from pywebcopy import save_webpage, save_website, config
 from flask import Flask
 from flask_pymongo import PyMongo
 
@@ -16,23 +16,6 @@ meas_list1 = ["topic_733", "topic_734","topic_738", "topic_739", "topic_741", "t
 # relevant measures for Phishing -> can be updated by Inspecting "https://www.sicherheitshandbuch.gv.at/"
 meas_list2 = ["topic_865", "topic_430", "topic_868", "topic_869", "topic_883", "topic_893", "topic_900", "topic_3038", "topic_909", "topic_911", "topic_20201201", "topic_20201202", "topic_20201203", "topic_20201204", "topic_20201205"]
 # put measure into python dictionary
-'''
-def find_byid(topic):
-    result = {}
-    res_desc = ""
-    cid = soup.find(id=topic)
-    res_title = cid.find('h3').get_text()
-    for i in cid.find_all(["div","li"]):
-        part = i.get_text()
-        res_desc += part 
-    result["title"] = res_title
-    result["description"] = res_desc
-    result["topic"] = topic
-    return result 
-'''
-
-
-
 
 def find_byid(topic):
     result = {}
@@ -40,32 +23,20 @@ def find_byid(topic):
     
     result["title"] = cid.find('h3').get_text()
 
+    
     des = soup2.find(id=topic)
-
     for h3 in des('h3'):
         h3.decompose()
     
-    #print(des)
+    for a in des.findAll('a'):
+        a.replaceWithChildren()
+    
     result["description"] = des.prettify()
     result["topic"] = topic
   
     return result 
 
 
-
-
-  
-  
-
-
-# return measures in list of dictionaries
-'''
-def getall_topics():
-    resultlist = []
-    for x in meas_list: 
-        resultlist.append(find_byid(x))
-    return resultlist
-'''
 # Connection to Database
 app = Flask("__name__")
 mongodb_client = PyMongo(app, uri="mongodb://localhost:27017/incidentwebapp_DB")
@@ -73,8 +44,23 @@ db = mongodb_client.db
 
 # Pull Sicherheitshandbuch from URL
 def pull_url():
+    
     url = 'https://www.sicherheitshandbuch.gv.at/'
-    save_webpage(url, project_folder='resources',)
+    kwargs = {
+     'bypass_robots':False,
+     'debug': False,
+     'project_folder': 'resources',
+     'load_css': False,
+     'load_images': False,
+     'load_javascript': False,
+     'over_write': True,
+     'zip_project_folder': False
+
+     }
+
+    save_webpage(url,**kwargs)
+
+
 
 # Update Measures in DB
 def update_measures(choice):
@@ -109,13 +95,14 @@ def get_shbindex():
     for chapter in cid(class_="chapter"):
         #print(chapter['id'])
         print(chapter.h1.get_text())
+        #find all sections
         for section in chapter(class_="section"):
             print(section.h2.get_text())
     
 
 # TESTING
 
-
+#print(pull_url())
 #print(update_measures())
 #print(find_byid("topic_733"))
 
@@ -130,5 +117,27 @@ soup = BeautifulSoup(text,'html.parser')
 
 
 
+# old put to find_byid and put to string
+'''
+def find_byid(topic):
+    result = {}
+    res_desc = ""
+    cid = soup.find(id=topic)
+    res_title = cid.find('h3').get_text()
+    for i in cid.find_all(["div","li"]):
+        part = i.get_text()
+        res_desc += part 
+    result["title"] = res_title
+    result["description"] = res_desc
+    result["topic"] = topic
+    return result 
+'''
 
-
+# return measures in list of dictionaries
+'''
+def getall_topics():
+    resultlist = []
+    for x in meas_list: 
+        resultlist.append(find_byid(x))
+    return resultlist
+'''

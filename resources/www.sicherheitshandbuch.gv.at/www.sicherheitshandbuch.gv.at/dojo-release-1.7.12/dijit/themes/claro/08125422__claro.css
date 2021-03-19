@@ -1,33 +1,33 @@
-@import url(./1c31914e__dijit.css);
-@import url(./080f44fc__document.css);	/* rules on the document itself (rather than widgets), overriding dojo.css */
-@import url(icons/be26362f__commonIcons.css);/*sprite containing common icons to be used by all themes*/
-@import url(./cf625a14__Common.css);
-@import url(./%22form4d5bbbcb__Common.css);
-@import url(./%22form264e8c15__Button.css);
-@import url(./%22forma3d16c2a__Checkbox.css);
-@import url(./%22formd454e4aa__RadioButton.css);
-@import url(./%22form3dea3860__Select.css);
-@import url(./%22layoutb5c30d6a__TabContainer.css);
-@import url(./383a56f0__Dialog.css);
-@import url(./%22layout94270a82__AccordionContainer.css);
-@import url(./%22layoutf055a2e5__ContentPane.css);
-@import url(./36dcd426__Calendar.css);
-@import url(./1adbf358__Menu.css);
-@import url(./%22formf4f679af__Slider.css);
-@import url(./723da547__ColorPalette.css);
-@import url(./c5e880c3__InlineEditBox.css);
-@import url(./e67cdcd5__ProgressBar.css);
-@import url(./1f36467f__TimePicker.css);
-@import url(./%22layout41d007b5__BorderContainer.css);
-@import url(./2036d4fd__Tree.css); 
-@import url(./a5a41c45__Toolbar.css);
-@import url(./e36a0a3e__Editor.css);/*in order to test button or menu item with icon */
-@import url(icons/ef1b1380__editorIcons.css); /*sprite for editor icons to be used by all themes*/
-@import url(./0bdc3dd0__TitlePane.css);
-@import url(./%22form41444c87__NumberSpinner.css);
+@import url("../dijit.css");
+@import url("document.css");	/* rules on the document itself (rather than widgets), overriding dojo.css */
+@import url("../../icons/commonIcons.css");/*sprite containing common icons to be used by all themes*/
+@import url("Common.css");
+@import url("form/Common.css");
+@import url("form/Button.css");
+@import url("form/Checkbox.css");
+@import url("form/RadioButton.css");
+@import url("form/Select.css");
+@import url("layout/TabContainer.css");
+@import url("Dialog.css");
+@import url("layout/AccordionContainer.css");
+@import url("layout/ContentPane.css");
+@import url("Calendar.css");
+@import url("Menu.css");
+@import url("form/Slider.css");
+@import url("ColorPalette.css");
+@import url("InlineEditBox.css");
+@import url("ProgressBar.css");
+@import url("TimePicker.css");
+@import url("layout/BorderContainer.css");
+@import url("Tree.css"); 
+@import url("Toolbar.css");
+@import url("Editor.css");/*in order to test button or menu item with icon */
+@import url("../../icons/editorIcons.css"); /*sprite for editor icons to be used by all themes*/
+@import url("TitlePane.css");
+@import url("form/NumberSpinner.css");
 /*!
 * AerWebCopy Engine [version 6.3.0]
 * Copyright Aeroson Systems & Co.
 * File mirrored from https://www.sicherheitshandbuch.gv.at/dojo-release-1.7.12/dijit/themes/claro/claro.css
-* At UTC time: 2021-02-19 14:55:57.353115
+* At UTC time: 2021-03-19 13:32:34.796743
 */
