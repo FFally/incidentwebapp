@@ -96,10 +96,10 @@ def get_testset_3():
         "Security Incident Report": "#322",
         "Date": str(date.today().strftime("%b-%d-%Y")),
         "Reported by": "Mr. Hamann",
-        "Organizational Unit": "HR",
+        "Organizational Unit": "Board of Directors",
         "Contact": "+345456444",
         "Location": "Mailing Address",
-        "Incident Description": "This morning, an employee received a suspicious email and opened an attached file without checking the sender's address."
+        "Incident Description": "This morning, an employee received a suspicious email and deleted it according to our security policy guidelines."
         
     }
 

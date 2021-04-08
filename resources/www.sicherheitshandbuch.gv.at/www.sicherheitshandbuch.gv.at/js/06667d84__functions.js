@@ -765,5 +765,5 @@ function selectionToChecklist(id)
 * AerWebCopy Engine [version 6.3.0]
 * Copyright Aeroson Systems & Co.
 * File mirrored from https://www.sicherheitshandbuch.gv.at/js/functions.js
-* At UTC time: 2021-03-19 13:32:34.934719
+* At UTC time: 2021-03-19 13:40:43.263588
 */

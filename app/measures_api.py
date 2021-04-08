@@ -23,7 +23,6 @@ def find_byid(topic):
     
     result["title"] = cid.find('h3').get_text()
 
-    
     des = soup2.find(id=topic)
     for h3 in des('h3'):
         h3.decompose()
@@ -61,10 +60,8 @@ def pull_url():
     save_webpage(url,**kwargs)
 
 
-
 # Update Measures in DB
 def update_measures(choice):
-
     db.measures.drop()
 
     if choice == "Phishing":
