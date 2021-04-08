@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify, url_for
-from app import app, measures_api, mitre_api, cases_api
+from app import app, measures_api, mitre_api, cases_api, evidence_api
 from flask_pymongo import PyMongo
 from werkzeug.utils import redirect
 
