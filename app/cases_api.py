@@ -1,3 +1,6 @@
+from flask import Flask
+from flask_pymongo import PyMongo
+
 from datetime import date
 
 
@@ -33,7 +36,7 @@ def get_testset_1():
         "Organizational Unit": "Controlling",
         "Contact": "+9772828",
         "Location": "Mailing Address",
-        "Incident Description": "This morning, an employee received an email. At some point before 09:18, the employee clicked one of the links in that email and was taken to a page that misrepresented itself to be a Google login screen. She entered their Google login details but was presented with an error message so the employee closed the browser window and contacted the recipient to notify them that the employee couldn’t access the file. By entering their Google login details into the malicious web page, their account details were compromised. The attackers then used their details to log into their account at 19 February 2016 at 07:23 and send the malicious email out to their address book contacts – almost certainly using an automated tool. We traced the access to a Virgin Media IP in the UK but that’s probably just an infected computer or other proxy."
+        "Incident Description": "This morning, an employee received an email. At some point before 09:18, the employee clicked one of the links in that email and was taken to a page that misrepresented itself to be a Google login screen. She entered their Google login details but was presented with an error message so the employee closed the browser window and contacted the recipient to notify them that the employee couldn’t access the file. By entering their Google login details into the malicious web page, their account details were compromised. The attackers then used their details to log into their account 07:23 and send the malicious email out to their address book contacts – almost certainly using an automated tool. We traced the access to a Virgin Media IP in the UK but that’s probably just an infected computer or other proxy."
         
     }
     testsetlist = []
@@ -111,7 +114,10 @@ def get_testset_3():
     return testsetlist
 
 
-
+# Connection to Database
+app = Flask("__name__")
+mongodb_client = PyMongo(app, uri="mongodb://localhost:27017/incidentwebapp_DB")
+db = mongodb_client.db
 
 
 
